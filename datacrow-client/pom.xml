@@ -1,0 +1,220 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <parent>
+        <artifactId>datacrow-parent</artifactId>
+        <groupId>com.gdi.datacrow</groupId>
+        <version>1.0-SNAPSHOT</version>
+    </parent>
+    <modelVersion>4.0.0</modelVersion>
+
+    <artifactId>datacrow-client</artifactId>
+
+    <dependencies>
+        <dependency>
+            <groupId>com.gdi.datacrow</groupId>
+            <artifactId>datacrow-core</artifactId>
+            <version>1.0-SNAPSHOT</version>
+        </dependency>
+        <dependency>
+            <groupId>com.gdi.datacrow</groupId>
+            <artifactId>datacrow-server</artifactId>
+            <version>1.0-SNAPSHOT</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.gdi.datacrow</groupId>
+            <artifactId>datacrow-services</artifactId>
+            <version>1.0-SNAPSHOT</version>
+        </dependency>
+
+        <!-- https://mvnrepository.com/artifact/com.jtattoo/JTattoo -->
+        <dependency>
+            <groupId>com.jtattoo</groupId>
+            <artifactId>JTattoo</artifactId>
+            <version>1.6.11</version>
+        </dependency>
+        <!-- https://mvnrepository.com/artifact/org.apache.tika/tika-app -->
+        <dependency>
+            <groupId>org.apache.tika</groupId>
+            <artifactId>tika-app</artifactId>
+            <version>1.5</version>
+            <exclusions>
+                <exclusion>
+                    <artifactId>xerces</artifactId>
+                    <groupId>xercesImpl</groupId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <!-- https://mvnrepository.com/artifact/xerces/xercesImpl -->
+        <dependency>
+            <groupId>xerces</groupId>
+            <artifactId>xercesImpl</artifactId>
+            <version>2.12.0</version>
+        </dependency>
+
+        <!-- https://mvnrepository.com/artifact/javax.help/javahelp -->
+        <dependency>
+            <groupId>javax.help</groupId>
+            <artifactId>javahelp</artifactId>
+            <version>2.0.05</version>
+        </dependency>
+
+        <!-- https://mvnrepository.com/artifact/org.jfree/jfreechart -->
+        <dependency>
+            <groupId>org.jfree</groupId>
+            <artifactId>jfreechart</artifactId>
+            <version>1.0.14</version>
+        </dependency>
+        <!-- https://mvnrepository.com/artifact/org.jfree/jcommon -->
+        <dependency>
+            <groupId>org.jfree</groupId>
+            <artifactId>jcommon</artifactId>
+            <version>1.0.17</version>
+        </dependency>
+        <!-- https://mvnrepository.com/artifact/com.github.lukeu/swing-dpi -->
+        <dependency>
+            <groupId>com.github.lukeu</groupId>
+            <artifactId>swing-dpi</artifactId>
+            <version>0.6</version>
+        </dependency>
+
+
+    </dependencies>
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-dependency-plugin</artifactId>
+                <version>3.1.1</version>
+                <executions>
+                    <execution>
+                        <id>copy-dependencies</id>
+
+                        <goals>
+                            <goal>copy-dependencies</goal>
+                        </goals>
+                        <configuration>
+                            <outputDirectory>${project.build.directory}/lib</outputDirectory>
+                            <overWriteReleases>true</overWriteReleases>
+                            <overWriteSnapshots>true</overWriteSnapshots>
+                            <overWriteIfNewer>true</overWriteIfNewer>
+                            <excludeGroupIds>
+                                junit,org.hamcrest,org.mockito,org.powermock
+                            </excludeGroupIds>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <phase>generate-sources</phase>
+                        <goals>
+                            <goal>sources</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <verbose>true</verbose>
+                    <detail>true</detail>
+                    <outputDirectory>${project.build.directory}</outputDirectory>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>appassembler-maven-plugin</artifactId>
+                <version>1.10</version>
+                <executions>
+                    <execution>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>assemble</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <programs>
+                        <program>
+                            <mainClass>net.datacrow.DataCrow</mainClass>
+                            <id>datacrow-client</id>
+                        </program>
+                    </programs>
+                    <extraJvmArguments>
+                        --add-modules=ALL-SYSTEM
+                        -Duser.language=en
+                        -Duser.country=US
+                        -Dfile.encoding=UTF-8
+                        -XX:+UseG1GC
+                        -Xmx256M
+                        -Djava.awt.headless=false
+                        -Djava.util.logging.manager=org.apache.logging.log4j.jul.LogManager
+                    </extraJvmArguments>
+                    <!--&#45;&#45;add-opens javafx.base/com.sun.javafx.collections=javafx.web-->
+                    <!--&#45;&#45;add-exports javafx.controls/com.sun.javafx.scene.control=ALL-UNNAMED-->
+                    <repositoryLayout>flat</repositoryLayout>
+                    <useWildcardClassPath>true</useWildcardClassPath>
+                    <binFileExtensions>
+                        <!--<unix>.sh</unix>-->
+                    </binFileExtensions>
+                    <repositoryName>lib</repositoryName>
+                    <configurationDirectory>conf</configurationDirectory>
+                    <configurationSourceDirectory>${project.basedir}/conf</configurationSourceDirectory>
+                    <copyConfigurationDirectory>true</copyConfigurationDirectory>
+                    <!--<logsDirectory>log</logsDirectory>-->
+                    <showConsoleWindow>true</showConsoleWindow>
+                    <!--<unixScriptTemplate>${project.basedir}/src/main/resources/assembly/unixBinTemplate.sh</unixScriptTemplate>-->
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-antrun-plugin</artifactId>
+                <version>1.8</version>
+                <executions>
+                    <execution>
+                        <id>createDistJar</id>
+                        <goals>
+                            <goal>run</goal>
+                        </goals>
+                        <phase>package</phase>
+                        <configuration>
+                            <target>
+                                <echo message="${project.build.directory}"/>
+                                <mkdir dir="${project.build.directory}"/>
+                                <zip destfile="${project.build.directory}/datacrow-client-${project.version}.zip"
+                                     basedir="${project.build.directory}/appassembler/">
+                                </zip>
+                            </target>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+
+                <artifactId>maven-jar-plugin</artifactId>
+
+                <configuration>
+                    <archive>
+                        <index>true</index>
+                        <manifest>
+                            <addClasspath>true</addClasspath>
+                            <classpathPrefix>lib</classpathPrefix>
+                            <mainClass>net.datacrow.DataCrow</mainClass>
+                        </manifest>
+
+                    </archive>
+                </configuration>
+
+            </plugin>
+
+
+        </plugins>
+        <resources>
+            <resource>
+                <directory>src/main/resources</directory>
+                <filtering>true</filtering>
+            </resource>
+            <resource>
+                <directory>src/main/java</directory>
+            </resource>
+        </resources>
+    </build>
+
+</project>
